@@ -111,7 +111,8 @@ function printElement(element, indent)
         {"Parent", "AXParent"},
         {"Children", "AXChildren"},
         {"Window", "AXWindow"},
-        {"Window Number", "AXWindowNumber"}
+        {"Window Number", "AXWindowNumber"},
+        {"Bundle Identifier", "AXBundleIdentifier"}
     }
 
     for _, attr in ipairs(attributes) do
@@ -314,6 +315,10 @@ local function expandAllNotificationStacks(ncElem)
         -- moveMouse(frameCenterX, frameCenterY, 2)
         hs.eventtap.leftClick({x = frameCenterX, y = frameCenterY})
     end
+    if #notificationStacks == 0 then
+        print("No notification stacks found")
+        return
+    end
     waitFor({
         element = ncElem,
         selector = {
@@ -344,6 +349,7 @@ local function dismissTopNotification()
         print("Could not get accessibility element for Notification Center")
         return
     end
+    expandAllNotificationStacks(ncElem)
     local notificationAlerts = getAllElements(ncElem, {
         role = "AXGroup",
         subrole = "AXNotificationCenterAlert"
