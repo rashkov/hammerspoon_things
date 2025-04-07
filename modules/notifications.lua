@@ -60,6 +60,8 @@ function M.dismissTopNotification()
     local ncElem = M.getNotificationCenterAxElement()
     if not ncElem then return end
 
+    local originalMousePos = hs.mouse.get()
+    
     M.expandAllNotificationStacks(ncElem)
     local notificationAlerts = accessibility.getAllElements(ncElem, {
         role = "AXGroup",
@@ -92,12 +94,13 @@ function M.dismissTopNotification()
         print("No close button found")
         return
     end
-    
+
     local frame = closeButton:attributeValue("AXFrame")
     local closeButtonX = frame.x + frame.w / 2
     local closeButtonY = frame.y + frame.h / 2
     mouse.moveMouse(closeButtonX, closeButtonY, 2)
     hs.eventtap.leftClick({x = closeButtonX, y = closeButtonY})
+    hs.mouse.setAbsolutePosition(originalMousePos)
 end
 
 return M
