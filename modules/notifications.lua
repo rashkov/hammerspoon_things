@@ -60,7 +60,7 @@ function M.dismissTopNotification()
     local ncElem = M.getNotificationCenterAxElement()
     if not ncElem then return end
 
-    local originalMousePos = hs.mouse.get()
+    local originalMousePos = hs.mouse.absolutePosition()
     
     M.expandAllNotificationStacks(ncElem)
     local notificationAlerts = accessibility.getAllElements(ncElem, {
@@ -100,7 +100,56 @@ function M.dismissTopNotification()
     local closeButtonY = frame.y + frame.h / 2
     mouse.moveMouse(closeButtonX, closeButtonY, 2)
     hs.eventtap.leftClick({x = closeButtonX, y = closeButtonY})
-    hs.mouse.setAbsolutePosition(originalMousePos)
+    hs.mouse.absolutePosition(originalMousePos)
+end
+
+function M.clearAllNotifications()
+    local ncElem = M.getNotificationCenterAxElement()
+    if not ncElem then return end
+
+    local originalMousePos = hs.mouse.absolutePosition()
+
+    -- Find notification stacks (same as expandAllNotificationStacks uses)
+    local notificationStacks = accessibility.getAllElements(ncElem, {
+        role = "AXGroup",
+        subrole = "AXNotificationCenterAlertStack"
+    })
+    if #notificationStacks == 0 then
+        print("No notification stacks found")
+        return
+    end
+
+    -- Sort by Y position to get the top stack
+    table.sort(notificationStacks, function(a, b)
+        return a:attributeValue("AXFrame").y < b:attributeValue("AXFrame").y
+    end)
+
+    -- Hover over the top stack (instead of clicking to expand)
+    local topStack = notificationStacks[1]
+    mouse.hoverElement(topStack)
+
+    local clearAllButton = accessibility.waitFor({
+        element = ncElem,
+        selector = {
+            role = "AXButton",
+            description = "Clear All"
+        },
+        timeout = 5000000,
+        interval = 100000
+    })
+
+    if not clearAllButton then
+        print("Clear All button not found")
+        hs.mouse.absolutePosition(originalMousePos)
+        return
+    end
+
+    print("Clicking Clear All button")
+    local frame = clearAllButton:attributeValue("AXFrame")
+    local buttonCenterX = frame.x + frame.w / 2
+    local buttonCenterY = frame.y + frame.h / 2
+    hs.eventtap.leftClick({x = buttonCenterX, y = buttonCenterY})
+    hs.mouse.absolutePosition(originalMousePos)
 end
 
 return M

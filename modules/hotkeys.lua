@@ -41,6 +41,13 @@ function M.init()
         local notifications = require('modules.notifications')
         notifications.dismissTopNotification()
     end)
+
+    -- Clear all notifications
+    hs.hotkey.bind({"cmd", "alt", "ctrl", "shift"}, "space", function()
+        print("Clearing all notifications")
+        local notifications = require('modules.notifications')
+        notifications.clearAllNotifications()
+    end)
 end
 
 return M
