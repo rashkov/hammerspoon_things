@@ -11,15 +11,13 @@ Global keyboard shortcuts:
 - **⌘⌥⌃H**: Hide Hammerspoon console
 - **⌘⌥⌃W**: Print all visible windows (debug info)
 - **⌘⌥⌃X**: Print all notifications
-- **⌘⌥⌃Space**: Dismiss top notification
-- **⌘⌥⌃⇧Space**: Clear all notifications
+- **⌘⌥⌃Space**: Clear all notifications
 
 ### Notification Management
 Notification center controls using accessibility APIs:
 
 - Print all current notifications in console
-- Dismiss the most recent notification
-- Clear all notifications at once
+- Clear all notifications (uses "Clear All" button when available, falls back to individual close buttons)
 - Expands notification stacks when needed
 
 ### UI Debugger Tools
